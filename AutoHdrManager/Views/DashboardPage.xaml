@@ -121,7 +121,7 @@
                                        ToolTip="{Binding FullPath}">
                                 <TextBlock.InputBindings>
                                     <MouseBinding MouseAction="LeftClick"
-                                                  Command="{Binding DataContext.OpenFileLocationCommand, ElementName=DashboardRoot}"
+                                                  Command="{Binding DataContext.OpenFileLocationCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
                                                   CommandParameter="{Binding}" />
                                 </TextBlock.InputBindings>
                                 <TextBlock.Style>
@@ -195,27 +195,29 @@
                                 </TextBlock>
                             </Border>
 
-                            <!-- Toggle HDR button -->
+                            <!-- Enable button (shown when HDR is off) -->
                             <ui:Button
                                 Grid.Column="4"
+                                Content="Enable"
+                                Appearance="Primary"
                                 VerticalAlignment="Center"
                                 Padding="10,5"
                                 Margin="0,0,6,0"
-                                Command="{Binding DataContext.ToggleHdrCommand, ElementName=DashboardRoot}"
-                                CommandParameter="{Binding}">
-                                <ui:Button.Style>
-                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
-                                        <Setter Property="Content" Value="Enable" />
-                                        <Setter Property="Appearance" Value="Primary" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsAutoHdrEnabled}" Value="True">
-                                                <Setter Property="Content" Value="Disable" />
-                                                <Setter Property="Appearance" Value="Secondary" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </ui:Button.Style>
-                            </ui:Button>
+                                Visibility="{Binding IsAutoHdrEnabled, Converter={StaticResource InverseBoolToVisibility}}"
+                                Command="{Binding DataContext.ToggleHdrCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                CommandParameter="{Binding}" />
+
+                            <!-- Disable button (shown when HDR is on) -->
+                            <ui:Button
+                                Grid.Column="4"
+                                Content="Disable"
+                                Appearance="Secondary"
+                                VerticalAlignment="Center"
+                                Padding="10,5"
+                                Margin="0,0,6,0"
+                                Visibility="{Binding IsAutoHdrEnabled, Converter={StaticResource BoolToVisibility}}"
+                                Command="{Binding DataContext.ToggleHdrCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
+                                CommandParameter="{Binding}" />
 
                             <!-- Remove button -->
                             <ui:Button
@@ -225,7 +227,7 @@
                                 Padding="8,5"
                                 ToolTip="Remove entry from registry"
                                 Icon="{ui:SymbolIcon Delete24}"
-                                Command="{Binding DataContext.RemoveEntryCommand, ElementName=DashboardRoot}"
+                                Command="{Binding DataContext.RemoveEntryCommand, RelativeSource={RelativeSource AncestorType={x:Type Page}}}"
                                 CommandParameter="{Binding}" />
                         </Grid>
                     </Border>

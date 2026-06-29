@@ -39,17 +39,18 @@ public class RegistryService
             if (string.IsNullOrWhiteSpace(name))
                 continue;
 
+            name = name.Trim('"', ' ');
+
             var behaviors = subKey.GetValue("D3DBehaviors") as string ?? string.Empty;
 
-            var resolvedPath = name.Contains('\\') || name.Contains('/') ? name : name;
-            var fileExists = File.Exists(resolvedPath);
+            var fileExists = File.Exists(name);
 
             entries.Add(new HdrEntry
             {
                 FullPath = name,
                 ExeName = Path.GetFileName(name),
-                DisplayName = AppInfoHelper.GetDisplayName(resolvedPath),
-                IconSource = AppInfoHelper.GetIconSource(resolvedPath),
+                DisplayName = AppInfoHelper.GetDisplayName(name),
+                IconSource = AppInfoHelper.GetIconSource(name),
                 FileExists = fileExists,
                 RegistryKeyPath = $@"{D3DKeyPath}\{subKeyName}",
                 D3DBehaviors = behaviors,

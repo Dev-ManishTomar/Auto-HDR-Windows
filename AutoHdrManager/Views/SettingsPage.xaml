@@ -1,0 +1,153 @@
+<Page
+    x:Class="AutoHdrManager.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Background="Transparent">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,16" MaxWidth="600" HorizontalAlignment="Left">
+
+            <!-- Header -->
+            <TextBlock Text="Settings" FontSize="28" FontWeight="SemiBold" />
+            <TextBlock
+                Text="Appearance and application information"
+                FontSize="13" Opacity="0.6" Margin="0,4,0,24" />
+
+            <!-- Theme section -->
+            <TextBlock Text="APPEARANCE" FontSize="11" FontWeight="SemiBold" Opacity="0.5" Margin="0,0,0,8" />
+            <Border
+                Padding="20"
+                CornerRadius="8"
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                Margin="0,0,0,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Dark Mode" FontSize="14" FontWeight="SemiBold" />
+                        <TextBlock
+                            Text="Use dark theme for the application"
+                            FontSize="12" Opacity="0.5" Margin="0,2,0,0" />
+                    </StackPanel>
+                    <ui:ToggleSwitch
+                        x:Name="ThemeToggle"
+                        Grid.Column="1"
+                        IsChecked="True"
+                        Checked="ThemeToggle_OnChecked"
+                        Unchecked="ThemeToggle_OnUnchecked"
+                        VerticalAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- About section -->
+            <TextBlock Text="ABOUT" FontSize="11" FontWeight="SemiBold" Opacity="0.5" Margin="0,0,0,8" />
+            <Border
+                Padding="20"
+                CornerRadius="8"
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                Margin="0,0,0,24">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                        <ui:SymbolIcon Symbol="Shield24" FontSize="32" Margin="0,0,12,0" />
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="Auto HDR Manager" FontSize="18" FontWeight="SemiBold" />
+                            <TextBlock Text="Version 1.0.0" FontSize="12" Opacity="0.5" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Separator Opacity="0.15" Margin="0,0,0,12" />
+
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.6" Margin="0,0,0,8">
+                        Force-enable Windows Auto HDR for any Direct3D game by managing
+                        per-application registry overrides under
+                        HKCU\SOFTWARE\Microsoft\Direct3D.
+                    </TextBlock>
+
+                    <TextBlock TextWrapping="Wrap" FontSize="12" Opacity="0.6" Margin="0,0,0,12">
+                        Based on autohdr_force by ledoge. Rewritten as a modern Windows 11
+                        desktop app with registry scanning and one-click management.
+                    </TextBlock>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Registry path:" FontSize="11" Opacity="0.4" Margin="0,0,6,0" />
+                        <TextBlock
+                            Text="HKCU\SOFTWARE\Microsoft\Direct3D"
+                            FontSize="11" FontFamily="Cascadia Code,Consolas,monospace" Opacity="0.6" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- How it works section -->
+            <TextBlock Text="HOW IT WORKS" FontSize="11" FontWeight="SemiBold" Opacity="0.5" Margin="0,0,0,8" />
+            <Border
+                Padding="20"
+                CornerRadius="8"
+                Background="{DynamicResource ControlFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                BorderThickness="1">
+                <StackPanel>
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="22" Height="22" CornerRadius="11"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="1" FontSize="11" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="White" />
+                        </Border>
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" FontSize="12" Opacity="0.7" VerticalAlignment="Center">
+                            Creates an ApplicationN subkey under the Direct3D registry key
+                        </TextBlock>
+                    </Grid>
+
+                    <Grid Margin="0,0,0,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="22" Height="22" CornerRadius="11"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="2" FontSize="11" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="White" />
+                        </Border>
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" FontSize="12" Opacity="0.7" VerticalAlignment="Center">
+                            Sets the Name value to the game executable path
+                        </TextBlock>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="28" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Width="22" Height="22" CornerRadius="11"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                HorizontalAlignment="Left">
+                            <TextBlock Text="3" FontSize="11" FontWeight="Bold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Foreground="White" />
+                        </Border>
+                        <TextBlock Grid.Column="1" TextWrapping="Wrap" FontSize="12" Opacity="0.7" VerticalAlignment="Center">
+                            Writes D3DBehaviors value to enable Auto HDR and optionally 10-bit
+                        </TextBlock>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</Page>

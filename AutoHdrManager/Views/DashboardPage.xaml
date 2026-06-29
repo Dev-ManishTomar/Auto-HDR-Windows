@@ -1,0 +1,254 @@
+<Page
+    x:Class="AutoHdrManager.Views.DashboardPage"
+    x:Name="DashboardRoot"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:models="clr-namespace:AutoHdrManager.Models"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Background="Transparent">
+
+    <Grid Margin="24,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Registry Dashboard" FontSize="28" FontWeight="SemiBold" />
+                <TextBlock
+                    Text="Applications with Direct3D Auto HDR overrides"
+                    FontSize="13" Opacity="0.6" Margin="0,4,0,0" />
+            </StackPanel>
+
+            <ui:Button
+                Grid.Column="1"
+                Content="Refresh"
+                Appearance="Primary"
+                Icon="{ui:SymbolIcon ArrowSync24}"
+                Command="{Binding ScanCommand}"
+                VerticalAlignment="Center" />
+        </Grid>
+
+        <!-- Scanning indicator -->
+        <ProgressBar
+            Grid.Row="1"
+            IsIndeterminate="True"
+            Height="2"
+            Margin="0,0,0,8"
+            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}" />
+
+        <!-- Empty state -->
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
+            <ui:SymbolIcon Symbol="DatabaseSearch20" FontSize="48" Opacity="0.25" />
+            <TextBlock
+                Text="No registry entries found"
+                FontSize="15" Opacity="0.45"
+                HorizontalAlignment="Center" Margin="0,12,0,4" />
+            <TextBlock
+                Text="Click Refresh to scan, or use Apply HDR to add an executable."
+                FontSize="12" Opacity="0.35"
+                HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <!-- Entry list -->
+        <ListView
+            Grid.Row="2"
+            ItemsSource="{Binding Entries}"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            Background="Transparent"
+            BorderThickness="0"
+            Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
+            <ListView.Resources>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="Margin" Value="0,3" />
+                </Style>
+            </ListView.Resources>
+            <ListView.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:HdrEntry}">
+                    <Border
+                        Padding="14,12"
+                        CornerRadius="8"
+                        Background="{DynamicResource ControlFillColorDefaultBrush}"
+                        BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                        BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- App icon -->
+                            <Border Grid.Column="0" Width="36" Height="36" CornerRadius="6"
+                                    Background="#18FFFFFF" Margin="0,0,12,0"
+                                    VerticalAlignment="Center">
+                                <Grid>
+                                    <Image Source="{Binding IconSource}"
+                                           Width="24" Height="24"
+                                           RenderOptions.BitmapScalingMode="HighQuality"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Visibility="{Binding FileExists, Converter={StaticResource BoolToVisibility}}" />
+                                    <ui:SymbolIcon Symbol="Apps24" FontSize="18" Opacity="0.4"
+                                                   Visibility="{Binding FileExists, Converter={StaticResource InverseBoolToVisibility}}" />
+                                </Grid>
+                            </Border>
+
+                            <!-- App name (clickable) -->
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Text="{Binding DisplayName}"
+                                       TextTrimming="CharacterEllipsis"
+                                       Cursor="Hand"
+                                       ToolTip="{Binding FullPath}">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                                  Command="{Binding DataContext.OpenFileLocationCommand, ElementName=DashboardRoot}"
+                                                  CommandParameter="{Binding}" />
+                                </TextBlock.InputBindings>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="TextDecorations" Value="Underline" />
+                                                <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+
+                            <!-- HDR badge -->
+                            <Border Grid.Column="2" CornerRadius="4" Padding="10,5"
+                                    VerticalAlignment="Center" Margin="0,0,6,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#3D3D3D" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAutoHdrEnabled}" Value="True">
+                                                <Setter Property="Background" Value="#1F7A3F" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock FontSize="11" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="HDR Off" />
+                                            <Setter Property="Foreground" Value="#999999" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAutoHdrEnabled}" Value="True">
+                                                    <Setter Property="Text" Value="HDR On" />
+                                                    <Setter Property="Foreground" Value="White" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+
+                            <!-- 10-bit badge -->
+                            <Border Grid.Column="3" CornerRadius="4" Padding="10,5"
+                                    VerticalAlignment="Center" Margin="0,0,10,0"
+                                    Visibility="{Binding IsAutoHdrEnabled, Converter={StaticResource BoolToVisibility}}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#3D3D3D" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Is10BitEnabled}" Value="True">
+                                                <Setter Property="Background" Value="#0C5FB0" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock FontSize="11" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="10-bit" />
+                                            <Setter Property="Foreground" Value="#999999" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Is10BitEnabled}" Value="True">
+                                                    <Setter Property="Text" Value="10-bit" />
+                                                    <Setter Property="Foreground" Value="White" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+
+                            <!-- Toggle HDR button -->
+                            <ui:Button
+                                Grid.Column="4"
+                                VerticalAlignment="Center"
+                                Padding="10,5"
+                                Margin="0,0,6,0"
+                                Command="{Binding DataContext.ToggleHdrCommand, ElementName=DashboardRoot}"
+                                CommandParameter="{Binding}">
+                                <ui:Button.Style>
+                                    <Style TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+                                        <Setter Property="Content" Value="Enable" />
+                                        <Setter Property="Appearance" Value="Primary" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAutoHdrEnabled}" Value="True">
+                                                <Setter Property="Content" Value="Disable" />
+                                                <Setter Property="Appearance" Value="Secondary" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ui:Button.Style>
+                            </ui:Button>
+
+                            <!-- Remove button -->
+                            <ui:Button
+                                Grid.Column="5"
+                                Appearance="Danger"
+                                VerticalAlignment="Center"
+                                Padding="8,5"
+                                ToolTip="Remove entry from registry"
+                                Icon="{ui:SymbolIcon Delete24}"
+                                Command="{Binding DataContext.RemoveEntryCommand, ElementName=DashboardRoot}"
+                                CommandParameter="{Binding}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Status bar -->
+        <Border
+            Grid.Row="3"
+            Margin="0,12,0,0"
+            Padding="12,10"
+            CornerRadius="6"
+            Background="{DynamicResource ControlFillColorDefaultBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:SymbolIcon Grid.Column="0" Symbol="Info24" FontSize="14" Opacity="0.5" Margin="0,0,8,0" />
+                <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" FontSize="12" Opacity="0.7" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+
+</Page>
